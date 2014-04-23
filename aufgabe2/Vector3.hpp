@@ -54,7 +54,7 @@ public:
 	Vector3& operator=(const Vector3& rhs) { data = rhs.data; return *this; }
 	bool operator==(const Vector3& rhs) {
 		Vector3 d = *this - rhs;
-		return d.dot(d) < 0.0001;
+		return d.dot(d) <= 0.0001;
 	}
 };
 template<typename T>

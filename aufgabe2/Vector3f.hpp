@@ -52,7 +52,7 @@ public:
 	Vector3f& operator=(const Vector3f& rhs) { data = rhs.data; return *this; }
 	bool operator==(const Vector3f& rhs) {
 		Vector3f d = *this - rhs;
-		return d.dot(d) < 0.0001;
+		return d.dot(d) <= 0.0001;
 	}
 };
 Vector3f operator*(float lhs, const Vector3f& rhs) { return rhs * lhs; }
