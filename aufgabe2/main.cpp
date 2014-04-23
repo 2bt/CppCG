@@ -1,22 +1,17 @@
 #include <cstdio>
 
+typedef float real;
+
 #ifdef A1
 #include "Vector3f.hpp"
-typedef float real;
 #endif
 #ifdef A2
 #include "Vector3.hpp"
-namespace cpp4cg {
-	typedef cpp4cg::Vector3<float> Vector3f;
-	typedef cpp4cg::Vector3f::value_type real;
-}
+namespace cpp4cg { typedef cpp4cg::Vector3<real> Vector3f; }
 #endif
 #ifdef A3
 #include "VectorN.hpp"
-namespace cpp4cg {
-	typedef cpp4cg::Vector<float, 3> Vector3f;
-	typedef cpp4cg::Vector3f::value_type real;
-}
+namespace cpp4cg { typedef cpp4cg::Vector<real, 3> Vector3f; }
 #endif
 
 void print_vector(const cpp4cg::Vector3f& v) {
