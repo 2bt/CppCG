@@ -11,8 +11,11 @@ namespace cpp4cg { typedef cpp4cg::Vector3<real> Vector3f; }
 #endif
 #ifdef A3
 #include "VectorN.hpp"
-namespace cpp4cg { typedef cpp4cg::Vector<real, 3> Vector3f; }
-void print_vector(const cpp4cg::Vector<real, 2>& v) {
+namespace cpp4cg {
+	typedef cpp4cg::Vector<real, 3> Vector3f;
+	typedef cpp4cg::Vector<real, 2> Vector2f;
+}
+void print_vector(const cpp4cg::Vector2f& v) {
 	printf("(%.1f, %.1f)\n", v[0], v[1]);
 }
 #endif
@@ -71,6 +74,15 @@ int main(int argc, char** argv) {
 	print_vector(v5);
 
 	printf("All is %s\n", (v4 == v5) ? "right" : "wrong");
+
+#ifdef A3
+	Vector2f q;
+	Vector2f w(1, 2);
+	q.set_x(5);
+	q.set_y(10);
+	printf("len: %f\n", q.length());
+	printf("dot: %f\n", q.dot(w));
+#endif
 
 	return 0;
 }
