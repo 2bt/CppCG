@@ -12,15 +12,18 @@ namespace cpp4cg { typedef cpp4cg::Vector3<real> Vector3f; }
 #ifdef A3
 #include "VectorN.hpp"
 namespace cpp4cg { typedef cpp4cg::Vector<real, 3> Vector3f; }
+void print_vector(const cpp4cg::Vector<real, 2>& v) {
+	printf("(%.1f, %.1f)\n", v[0], v[1]);
+}
 #endif
 
 void print_vector(const cpp4cg::Vector3f& v) {
 	printf("(%.1f, %.1f, %.1f)\n", v[0], v[1], v[2]);
 }
 
+using namespace cpp4cg;
 int main(int argc, char** argv) {
 	printf("Hello, world!\n");
-	using namespace cpp4cg;
 
 	Vector3f v1(1, 2, 3);
 	print_vector(v1);
@@ -49,7 +52,7 @@ int main(int argc, char** argv) {
 	printf("test: %f (Erwartet: 0)\n", v3.dot(v1));
 	printf("test: %f (Erwartet: 0)\n", v3.dot(v2));
 
-	// Die Vektoren v1, v2 und v3 sind XXX
+	// Die Vektoren v1, v2 und v3 sind zueinander orthogonal
 
 	Vector3f v4(3.14159265359f, 2.71828182846f, 42.f);
 	print_vector(v4);
@@ -58,7 +61,7 @@ int main(int argc, char** argv) {
 	real s2 = v4.dot(v2);
 	real s3 = v4.dot(v3);
 
-	// Die Skalare s1, s2 und s3 sind XXX
+	// Die Skalare s1, s2 und s3 sind Koordinaten für die Basis (v1, v2, v3)
 
 	printf("s1: %f\n", s1);
 	printf("s2: %f\n", s2);

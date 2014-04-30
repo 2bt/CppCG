@@ -23,7 +23,7 @@ public:
 	Vector() : Super() {}
 	~Vector() {}
 
-	Vector(const AbstractVectorN<T, 3>& src) : Super(src) {}
+	Vector(const Super& src) : Super(src) {}
 
 	Vector(T x, T y, T z) { set(x, y, z); }
 	T get_x() const { return (*this)[0]; }
@@ -42,6 +42,29 @@ public:
 			(*this)[1]*rhs[2] - (*this)[2]*rhs[1],
 			(*this)[2]*rhs[0] - (*this)[0]*rhs[2],
 			(*this)[0]*rhs[1] - (*this)[1]*rhs[0]);
+	}
+};
+
+
+
+template<class T>
+class Vector<T, 2> : public AbstractVectorN<T, 2> {
+private:
+	typedef AbstractVectorN<T, 2> Super;
+public:
+	Vector() : Super() {}
+	~Vector() {}
+
+	Vector(const Super& src) : Super(src) {}
+
+	Vector(T x, T y) { set(x, y); }
+	T get_x() const { return (*this)[0]; }
+	T get_y() const { return (*this)[1]; }
+	void set_x(T v) { (*this)[0] = v; }
+	void set_y(T v) { (*this)[1] = v; }
+	void set(T X, T Y) {
+		(*this)[0] = X;
+		(*this)[1] = Y;
 	}
 };
 

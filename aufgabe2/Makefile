@@ -8,3 +8,5 @@
 
 clean:
 	rm -f a-2.1 a-2.2 a-2.3
+
+.PHONY: clean 1 2 3
