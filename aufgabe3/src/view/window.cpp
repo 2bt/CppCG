@@ -47,8 +47,9 @@ void Window::ensureCurrent() const {
 void Window::glutDisplay() {
 	Window* w = static_cast<Window*>(glutGetWindowData());
 	if (w && w->_glut_win_id && w->_glut_win_id == glutGetWindow()) {
-		w->display();
+		bool redraw = w->display();
 		glutSwapBuffers();
+		if (redraw) glutPostRedisplay();
 	}
 }
 
