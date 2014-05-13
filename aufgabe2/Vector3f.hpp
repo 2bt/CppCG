@@ -49,7 +49,7 @@ public:
 		}
 		return data[idx];
 	}
-	Vector3f& operator=(const Vector3f& rhs) { data = rhs.data; return *this; }
+	Vector3f& operator=(const Vector3f& rhs) { if (&rhs != this) data = rhs.data; return *this; }
 	bool operator==(const Vector3f& rhs) {
 		Vector3f d = *this - rhs;
 		return d.dot(d) <= 0.0001;

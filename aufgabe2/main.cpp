@@ -1,6 +1,6 @@
 #include <cstdio>
 
-typedef float real;
+typedef double real;
 
 #ifdef A1
 #include "Vector3f.hpp"
