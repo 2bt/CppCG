@@ -8,11 +8,11 @@
 
 using namespace ::flappy_box::controller;
 
-WorldLogic::WorldLogic(const std::shared_ptr< flappy_box::model::World >& w, bool shallRestartTheGame )
+WorldLogic::WorldLogic(const std::shared_ptr< flappy_box::model::World >& w)
 : ::controller::Logic::ObjectLogic()
 , _model( w )
-, _shallRestartTheGame(shallRestartTheGame)
-{ }
+, _shallRestartTheGame(true) {
+}
 
 bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
 	static double time = 0;
@@ -33,7 +33,10 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 	auto paddle_it = std::find_if(l.game_model()->objects().begin(), l.game_model()->objects().end(),
 		[](std::shared_ptr< ::model::GameObject> const& p) { return p->name() == "Paddle"; });
-	auto paddle = std::dynamic_pointer_cast< flappy_box::model::Paddle >(*paddle_it);
+	std::shared_ptr<flappy_box::model::Paddle> paddle;
+	if (paddle_it != l.game_model()->objects().end()) {
+		paddle = std::dynamic_pointer_cast<flappy_box::model::Paddle>(*paddle_it);
+	}
 
 	auto world = std::dynamic_pointer_cast< flappy_box::model::World >(*std::find_if(
 			l.game_model()->objects().begin(), l.game_model()->objects().end(),
@@ -49,14 +52,17 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 	for (auto& obj : l.game_model()->objects()) {
 		//if (obj->name() != "Box") continue;
 		auto box = std::dynamic_pointer_cast<flappy_box::model::Box>(obj);
-		if (!box) continue;
-		setForce(box, paddle);
+		if (!box || !box->isAlive()) continue;
 
-		if (box->position()[2] < paddle->position()[2]) {
-			box->setAlive(false);
-			world->setLives(world->lives() - 1);
+		if (paddle) {
+			setForce(box, paddle);
+
+			if (box->position()[2] < paddle->position()[2]) {
+				box->setAlive(false);
+				world->setLives(world->lives() - 1);
+				continue;
+			}
 		}
-		if (!box->isAlive()) continue;
 
 		for (auto& obj2 : l.game_model()->objects()) {
 			auto box2 = std::dynamic_pointer_cast<flappy_box::model::Box>(obj2);

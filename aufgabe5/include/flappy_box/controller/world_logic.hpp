@@ -11,7 +11,7 @@ namespace controller {
 class WorldLogic : public ::controller::Logic::ObjectLogic {
 public:
 	WorldLogic() = delete;
-	WorldLogic( const std::shared_ptr< ::flappy_box::model::World >&, bool);
+	WorldLogic( const std::shared_ptr< ::flappy_box::model::World >&);
 
 	virtual bool advance( ::controller::Logic&, ::controller::InputEventHandler::keyboard_event const & ) override;
 

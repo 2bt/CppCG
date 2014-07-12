@@ -1,15 +1,22 @@
 #include "flappy_box/controller/flappy_engine.hpp"
 
-#include "flappy_box/model/box.hpp"
+
 #include "flappy_box/model/world.hpp"
-
-
-#include "flappy_box/controller/box_object_logic.hpp"
 #include "flappy_box/controller/world_logic.hpp"
+#include "flappy_box/view/world_gl_drawable.hpp"
+#include "flappy_box/view/world_al_audible.hpp"
+
+#include "flappy_box/model/paddle.hpp"
+#include "flappy_box/controller/paddle_logic.hpp"
+#include "flappy_box/view/paddle_gl_drawable.hpp"
+#include "flappy_box/view/paddle_al_audible.hpp"
+
+#include "flappy_box/model/box.hpp"
+#include "flappy_box/controller/box_object_logic.hpp"
 #include "flappy_box/view/box_gl_drawable.hpp"
 #include "flappy_box/view/box_al_audible.hpp"
-#include "view/glut_window.hpp"
 
+#include "view/glut_window.hpp"
 
 #include <AL/alut.h>
 #include <GL/freeglut.h>
@@ -47,9 +54,18 @@ void FlappyEngine::init( int& argc, char** argv ) {
 	box->setAngle(22.5);
 	game_model()->addGameObject(box);
 
+	// world
 	auto world = std::make_shared<flappy_box::model::World>();
-	//game_model()->addGameObject(world);
-	//game_logic()->logic_factory().register_module< flappy_box::model::World >( []( std::shared_ptr< flappy_box::model::World > const& w ) { return std::make_shared<WorldLogic>(w, false); });
+	game_model()->addGameObject(world);
+	game_logic()->logic_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<WorldLogic>(w); });
+	al_renderer()->audible_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<view::WorldAlAudible>(w); });
+	gl_renderer()->drawable_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<view::WorldGlDrawable>(w); });
+
+	// paddle
+	game_logic()->logic_factory().register_module<flappy_box::model::Paddle>([](std::shared_ptr<flappy_box::model::Paddle> const& p) { return std::make_shared<PaddleLogic>(p); });
+	al_renderer()->audible_factory().register_module<flappy_box::model::Paddle>([](std::shared_ptr<flappy_box::model::Paddle> const& p) { return std::make_shared<view::PaddleAlAudible>(p); });
+	gl_renderer()->drawable_factory().register_module<flappy_box::model::Paddle>([](std::shared_ptr<flappy_box::model::Paddle> const& p) { return std::make_shared<view::PaddleGlDrawable>(p); });
+
 }
 
 

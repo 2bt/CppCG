@@ -1,8 +1,8 @@
-# include "flappy_box/view/box_gl_drawable.hpp"
+#include "flappy_box/view/box_gl_drawable.hpp"
 
 #include <GL/freeglut.h>
 
-# include <algorithm>
+#include <algorithm>
 
 using namespace ::flappy_box::view;
 
