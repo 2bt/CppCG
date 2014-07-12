@@ -5,6 +5,7 @@
 
 
 #include "flappy_box/controller/box_object_logic.hpp"
+#include "flappy_box/controller/world_logic.hpp"
 #include "flappy_box/view/box_gl_drawable.hpp"
 #include "flappy_box/view/box_al_audible.hpp"
 #include "view/glut_window.hpp"
@@ -32,7 +33,7 @@ void FlappyEngine::init( int& argc, char** argv ) {
 
 	// register the delegate classes fo Box 
 	game_logic()->logic_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< BoxObjectLogic >     ( b ); } );
-	al_renderer()-> audible_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
+	al_renderer()->audible_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
 	gl_renderer()->drawable_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< view::BoxGlDrawable >( b ); } );
 
 	// TODO: Register all the other delegate classes
@@ -47,8 +48,8 @@ void FlappyEngine::init( int& argc, char** argv ) {
 	game_model()->addGameObject(box);
 
 	auto world = std::make_shared<flappy_box::model::World>();
-	game_model()->addGameObject(world);
-
+	//game_model()->addGameObject(world);
+	//game_logic()->logic_factory().register_module< flappy_box::model::World >( []( std::shared_ptr< flappy_box::model::World > const& w ) { return std::make_shared<WorldLogic>(w, false); });
 }
 
 

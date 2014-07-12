@@ -1,24 +1,23 @@
-# pragma once
+#pragma once
 
-# include "view/gl_renderer.hpp"
+#include "view/gl_renderer.hpp"
 
-# include "flappy_box/model/box.hpp"
+#include "flappy_box/model/box.hpp"
 
-namespace flappy_box
-{
-  namespace view
-  {
-    class BoxGlDrawable : public ::view::GlRenderer::Drawable
-    {
-      public:
+#include <GL/freeglut.h>
 
-        BoxGlDrawable( const std::shared_ptr< model::Box >& );
-        virtual ~BoxGlDrawable();
-        virtual void visualize( ::view::GlRenderer&, ::view::GlutWindow& ) override;
+namespace flappy_box {
+namespace view {
+class BoxGlDrawable : public ::view::GlRenderer::Drawable {
+public:
 
-      private:
-        std::shared_ptr< model::Box const > _model;
+	BoxGlDrawable( const std::shared_ptr< model::Box >& );
+	virtual ~BoxGlDrawable();
+	virtual void visualize( ::view::GlRenderer&, ::view::GlutWindow& ) override;
 
-    }; // BoxGlDrawable
-  }
+private:
+	std::shared_ptr< model::Box const > _model;
+	GLuint _texture;
+};
+}
 }

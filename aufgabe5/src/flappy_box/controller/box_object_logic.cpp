@@ -38,6 +38,7 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
 	_model->setPosition(p_neu);
 	_model->setVelocity(v_neu);
 	_model->setAcceleration(a_neu);
+	_model->setAngle(_model->angle() + timestep_sec * 10);
 
 	return false;
 }
