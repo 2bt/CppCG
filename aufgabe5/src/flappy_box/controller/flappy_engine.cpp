@@ -25,38 +25,24 @@
 
 using namespace ::flappy_box::controller;
 
-static std::function< void () > __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
+static std::function<void()> __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
 
-FlappyEngine::FlappyEngine( const std::shared_ptr< ::controller::Logic >& l )
-: ::controller::GlutEngine( l )
-, _al_renderer( std::make_shared< ::view::AlRenderer >( game_model() ) )
-, _gl_renderer( std::make_shared< ::view::GlRenderer >( game_model() ) )
-{}
+FlappyEngine::FlappyEngine( const std::shared_ptr< ::controller::Logic >& l)
+: ::controller::GlutEngine(l)
+, _al_renderer(std::make_shared<::view::AlRenderer>(game_model()))
+, _gl_renderer(std::make_shared<::view::GlRenderer>(game_model())) {
+}
 
 void FlappyEngine::init( int& argc, char** argv ) {
 	GlutEngine::init( argc, argv );
-
 	alutInit( &argc, argv );
 
-	// register the delegate classes fo Box 
-	game_logic()->logic_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< BoxObjectLogic >     ( b ); } );
-	al_renderer()->audible_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
-	gl_renderer()->drawable_factory().register_module< flappy_box::model::Box >( []( std::shared_ptr< flappy_box::model::Box > const& b ) { return std::make_shared< view::BoxGlDrawable >( b ); } );
-
-	// TODO: Register all the other delegate classes
-	//.
-	//.
-	//.
-
-	// create one single cube (to be deleted later...)
-	auto box = std::make_shared< flappy_box::model::Box>(); 
-	box->setSize(20.0);
-	box->setAngle(22.5);
-	game_model()->addGameObject(box);
+	// box
+	game_logic()->logic_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<BoxObjectLogic>(b); });
+	al_renderer()->audible_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<view::BoxAlAudible>(b); });
+	gl_renderer()->drawable_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<view::BoxGlDrawable>(b); });
 
 	// world
-	auto world = std::make_shared<flappy_box::model::World>();
-	game_model()->addGameObject(world);
 	game_logic()->logic_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<WorldLogic>(w); });
 	al_renderer()->audible_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<view::WorldAlAudible>(w); });
 	gl_renderer()->drawable_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<view::WorldGlDrawable>(w); });
@@ -66,6 +52,15 @@ void FlappyEngine::init( int& argc, char** argv ) {
 	al_renderer()->audible_factory().register_module<flappy_box::model::Paddle>([](std::shared_ptr<flappy_box::model::Paddle> const& p) { return std::make_shared<view::PaddleAlAudible>(p); });
 	gl_renderer()->drawable_factory().register_module<flappy_box::model::Paddle>([](std::shared_ptr<flappy_box::model::Paddle> const& p) { return std::make_shared<view::PaddleGlDrawable>(p); });
 
+
+	// create stuff...
+	auto world = std::make_shared<flappy_box::model::World>();
+	game_model()->addGameObject(world);
+
+	auto box = std::make_shared< flappy_box::model::Box>();
+	box->setSize(20.0);
+	box->setAngle(22.5);
+	game_model()->addGameObject(box);
 }
 
 
@@ -75,7 +70,6 @@ void FlappyEngine::run() {
 
 	// run game
 	GlutEngine::run();
-
 	alutExit();
 }
 
