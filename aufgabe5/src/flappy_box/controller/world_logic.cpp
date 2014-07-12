@@ -43,14 +43,13 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 			[](std::shared_ptr< ::model::GameObject> const& p) { return p->name() == "World"; }));
 
 	if (world->lives() > 0) world->setPlayerPoints(world->playerPoints() + 1);
-	else {
+	else if (paddle) {
 		auto over = std::make_shared<flappy_box::model::GameOver>("GameOver", world->playerPoints());
 		l.game_model()->addGameObject(over);
 		paddle->setAlive(false);
 	}
 
 	for (auto& obj : l.game_model()->objects()) {
-		//if (obj->name() != "Box") continue;
 		auto box = std::dynamic_pointer_cast<flappy_box::model::Box>(obj);
 		if (!box || !box->isAlive()) continue;
 
@@ -85,8 +84,9 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 
 void WorldLogic::restartGame( ::controller::Logic& l ) {
+
 	// invalidate all game objects
-	for (auto& o : l.game_model()->objects()) o->setAlive( false );
+	for (auto& o : l.game_model()->objects()) o->setAlive(false);
 	_model->setAlive(true);
 	_model->setPlayerPoints(0);
 	_model->setLives(5);
@@ -110,25 +110,24 @@ void WorldLogic::restartGame( ::controller::Logic& l ) {
 
 void WorldLogic::addBoxToGame( ::controller::Logic& l ) {
 
-
 	auto box = std::make_shared<flappy_box::model::Box>();
-	box->setMaxPosition({
-		_model->getWorldHalfWidth(), 
-		_model->getWorldHalfHeight(), 
-		0
-	});
 	box->setSize(1 + rand() / double(RAND_MAX) * 3);
-	box->setPosition({
-		rand() / double(RAND_MAX) * box->maxPosition()[0] - box->size(),
+
+	box->setMaxPosition({
+		_model->getWorldHalfWidth() - box->size() * 0.5,
 		0,
-		0
+		_model->getWorldHalfHeight() - box->size() * 0.5
+	});
+	box->setPosition({
+		(rand() / double(RAND_MAX) * 2 - 1) * box->maxPosition()[0],
+		0,
+		_model->getWorldHalfHeight() - box->size() * 0.5
 	});
 	l.game_model()->addGameObject(box);
-
-
 }
 
+
 void WorldLogic::setForce( std::shared_ptr< flappy_box::model::Box > & box, std::shared_ptr<flappy_box::model::Paddle > & paddle ) {
-  // realisiert die Interaktion zwischen Nutzer-Paddle und den Boxes
+  // TODO: realisiert die Interaktion zwischen Nutzer-Paddle und den Boxes
 }
 
