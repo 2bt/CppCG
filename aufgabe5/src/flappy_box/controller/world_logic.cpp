@@ -54,32 +54,72 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 		if (box->position()[2] < paddle->position()[2]) {
 			box->setAlive(false);
-			world->setLives(world->lives() -1);
+			world->setLives(world->lives() - 1);
 		}
+		if (!box->isAlive()) continue;
 
-		
+		for (auto& obj2 : l.game_model()->objects()) {
+			auto box2 = std::dynamic_pointer_cast<flappy_box::model::Box>(obj2);
+			if (!box2 || !box2->isAlive() || box == box2) continue;
+
+
+			auto d = box->position() - box2->position();
+			double l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+			if (l <= box->size() + box2->size()) {
+				box->setAlive(false);
+				box2->setAlive(false);
+			}
+
+		}
 	}
 
-  // p;
-//   for(auto it = l.game_model()->objects().begin(); it != l.game_model()->objects().end(); it++) {
-//     if(it->name() ==  "Paddle") {
-// 	auto p = dynamic_cast< ::flappy_box::model::Paddle >(it->get());
-// 	break;
-//     }
-//   }
   
-  
-  
-  return false;
+	return false;
 }
 
 
 void WorldLogic::restartGame( ::controller::Logic& l ) {
-  // setzt Spielobjekte zurück und startet das Spiel neu
+	// invalidate all game objects
+	for (auto& o : l.game_model()->objects()) o->setAlive( false );
+	_model->setAlive(true);
+	_model->setPlayerPoints(0);
+	_model->setLives(5);
+
+	// create and configure new paddle object
+	auto paddle = std::make_shared<flappy_box::model::Paddle>("Paddle");
+	paddle->setSize({ 10.0, 1.0, 2.5 });
+	paddle->setPosition({
+		0,
+		0,
+		-_model->getWorldHalfHeight() + paddle->size()[2] * 2
+	});
+	paddle->setMaxPosition({
+		_model->getWorldHalfWidth() - paddle->size()[0] * 0.5,
+		0,
+		_model->getWorldHalfHeight()
+	});
+	l.game_model()->addGameObject(paddle);
+	_shallRestartTheGame = false;
 }
-  
+
 void WorldLogic::addBoxToGame( ::controller::Logic& l ) {
-  // fügt dem Spiel eine neues Spielobjekt vom Typ flappy_box::model::Box hinzu
+
+
+	auto box = std::make_shared<flappy_box::model::Box>();
+	box->setMaxPosition({
+		_model->getWorldHalfWidth(), 
+		_model->getWorldHalfHeight(), 
+		0
+	});
+	box->setSize(1 + rand() / double(RAND_MAX) * 3);
+	box->setPosition({
+		rand() / double(RAND_MAX) * box->maxPosition()[0] - box->size(),
+		0,
+		0
+	});
+	l.game_model()->addGameObject(box);
+
+
 }
 
 void WorldLogic::setForce( std::shared_ptr< flappy_box::model::Box > & box, std::shared_ptr<flappy_box::model::Paddle > & paddle ) {

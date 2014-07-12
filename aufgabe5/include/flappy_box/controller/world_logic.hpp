@@ -1,17 +1,14 @@
-# pragma once
+#pragma once
 
-# include "controller/logic.hpp"
-# include "flappy_box/model/world.hpp"
-#include <flappy_box/model/paddle.hpp>
-#include <flappy_box/model/box.hpp>
+#include "controller/logic.hpp"
+#include "flappy_box/model/world.hpp"
+#include "flappy_box/model/paddle.hpp"
+#include "flappy_box/model/box.hpp"
 
-namespace flappy_box
-{
-namespace controller
-{
+namespace flappy_box {
+namespace controller {
 
-class WorldLogic : public ::controller::Logic::ObjectLogic
-{
+class WorldLogic : public ::controller::Logic::ObjectLogic {
 public:
 	WorldLogic() = delete;
 	WorldLogic( const std::shared_ptr< ::flappy_box::model::World >&, bool);

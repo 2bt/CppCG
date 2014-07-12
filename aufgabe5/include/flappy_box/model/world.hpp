@@ -1,16 +1,14 @@
-# pragma once
+#pragma once
 
-# include "model/game_object.hpp"
-# include "math.hpp"
+#include "model/game_object.hpp"
+#include "math.hpp"
 
 // ATTENTION: NEW CODE!
 
-namespace flappy_box
-{
-namespace model
-{
-class World : public ::model::GameObject
-{
+namespace flappy_box {
+namespace model {
+
+class World : public ::model::GameObject {
 public:
 
 	World( const std::string& = "World" );
@@ -30,7 +28,7 @@ private:
 	int _playerPoints;
 	int _remainingLives;
 
-}; // World
+};
 
-} // model::
-} // flappy_box::
+}
+}

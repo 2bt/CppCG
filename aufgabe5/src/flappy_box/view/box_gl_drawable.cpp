@@ -8,18 +8,15 @@ using namespace ::flappy_box::view;
 
 
 BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< ::flappy_box::model::Box >& b )
-: _model( b )
-{
+: _model( b ) {
   
 }
 
-BoxGlDrawable::~BoxGlDrawable()
-{
+BoxGlDrawable::~BoxGlDrawable() {
 
 }
 
-void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
-{
+void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
 
     // TODO: Replace old rendering code with new and improved rendering - Aufgabe 5.3
 

@@ -21,8 +21,9 @@ AlRenderer::delegate_factory_type const& AlRenderer::audible_factory() const
   return _audible_factory;
 }
 
-void AlRenderer::auralize_model()
-{
-  // TODO 4.3: call delegates
-  /*!!*/std::cerr << "!! view::AlRenderer::auralize_model: (PARTS ARE) UNIMPLEMENTED." << std::endl; 
+void AlRenderer::auralize_model() {
+	// TODO 4.3: call delegates
+	//*!!*/std::cerr << "!! view::AlRenderer::auralize_model: (PARTS ARE) UNIMPLEMENTED." << std::endl; 
+
+
 }
