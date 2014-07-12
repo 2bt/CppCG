@@ -24,7 +24,6 @@
 #include "view/glut_window.hpp"
 
 #include <AL/alut.h>
-#include <GL/freeglut.h>
 
 
 

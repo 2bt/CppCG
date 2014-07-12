@@ -1,8 +1,8 @@
-# include "view/gl_renderer.hpp"
+#include "view/gl_renderer.hpp"
 
-# include "view/glut_window.hpp"
+#include "view/glut_window.hpp"
 
-# include "GL/freeglut.h"
+#include <GL/freeglut.h>
 
 using namespace ::view;
 

@@ -1,6 +1,7 @@
-# include "controller/glut_engine.hpp"
+#include "controller/glut_engine.hpp"
 
-# include <GL/freeglut.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 
 using namespace ::controller;
 
@@ -10,26 +11,24 @@ static std::function< void () > __controller__glut_engine__step_func = [](){ thr
 
 // Calls global step function first.
 // Re-registering GLUT timer callback function.
-void glutStepTimer( int interval )
-{
+void glutStepTimer( int interval ) {
   __controller__glut_engine__step_func();
   glutTimerFunc( interval, glutStepTimer, interval );
 }
 
 GlutEngine::GlutEngine( const std::shared_ptr< Logic >& l ) 
-: Engine( l ) 
-{}
+: Engine(l) {
+}
 
-void GlutEngine::init( int& argc, char** argv )
-{
-  glutInit( &argc, argv );
+void GlutEngine::init( int& argc, char** argv ) {
+  glutInit(&argc, argv);
+  glewInit();
   glutSetOption( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION );
   // Set global function which will be invoked by glutStepTimer.
   __controller__glut_engine__step_func = [this](){ this->step(  ); };
 }
 
-void GlutEngine::run()
-{
+void GlutEngine::run() {
   // Register glutStepTimer for the first time, which re-registers itself until the glutMainLoop finishes.
   glutTimerFunc( _prefered_timestep_millisec, glutStepTimer, _prefered_timestep_millisec );
   // Run game.

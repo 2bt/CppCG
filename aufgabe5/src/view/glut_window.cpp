@@ -1,10 +1,8 @@
-# include "view/glut_window.hpp"
-
-
 #include <GL/glew.h>
-# include <GL/freeglut.h>
+#include <GL/freeglut.h>
 
-# include <iostream>
+#include "view/glut_window.hpp"
+#include <iostream>
 
 using namespace ::view;
 

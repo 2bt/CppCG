@@ -8,7 +8,7 @@ using namespace ::flappy_box::view;
 
 
 BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< ::flappy_box::model::Box >& b )
-: _model( b ) {
+: _model(b) {
 
  	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -28,7 +28,7 @@ BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< ::flappy_box::model::Box >& 
 }
 
 BoxGlDrawable::~BoxGlDrawable() {
- 	glGenTextures(1, &_texture);
+ 	glDeleteTextures(1, &_texture);
 }
 
 void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {

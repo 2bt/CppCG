@@ -1,8 +1,8 @@
-# pragma once
+#pragma once
 
-# include "model/game.hpp"
+#include "model/game.hpp"
 
-# include "factory_map.hpp"
+#include "factory_map.hpp"
 
 namespace view 
 {
