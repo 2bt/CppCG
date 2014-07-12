@@ -70,7 +70,7 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 			auto d = box->position() - box2->position();
 			double l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
-			if (l <= box->size() + box2->size()) {
+			if (l <= box->size() * 0.5 + box2->size() * 0.5) {
 				box->setAlive(false);
 				box2->setAlive(false);
 			}

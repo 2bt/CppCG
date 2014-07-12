@@ -81,7 +81,9 @@ add_executable( blatt5 src/flappy_box/controller/world_logic.cpp src/flappy_box/
                            src/flappy_box/view/paddle_al_audible.cpp
                            src/flappy_box/view/world_gl_drawable.cpp
                            src/flappy_box/view/world_al_audible.cpp
-                           
+                           src/flappy_box/view/game_over_gl_drawable.cpp
+                           src/flappy_box/view/game_over_al_audible.cpp
+
                            # sound management
                            src/sound_provider.cpp
               )

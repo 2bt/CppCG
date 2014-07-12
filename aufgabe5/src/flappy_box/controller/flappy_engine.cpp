@@ -1,6 +1,11 @@
 #include "flappy_box/controller/flappy_engine.hpp"
 
 
+#include "flappy_box/model/game_over.hpp"
+#include "flappy_box/controller/game_over_logic.hpp"
+#include "flappy_box/view/game_over_gl_drawable.hpp"
+#include "flappy_box/view/game_over_al_audible.hpp"
+
 #include "flappy_box/model/world.hpp"
 #include "flappy_box/controller/world_logic.hpp"
 #include "flappy_box/view/world_gl_drawable.hpp"
@@ -41,6 +46,11 @@ void FlappyEngine::init( int& argc, char** argv ) {
 	game_logic()->logic_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<BoxObjectLogic>(b); });
 	al_renderer()->audible_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<view::BoxAlAudible>(b); });
 	gl_renderer()->drawable_factory().register_module<flappy_box::model::Box>([](std::shared_ptr<flappy_box::model::Box> const& b) { return std::make_shared<view::BoxGlDrawable>(b); });
+
+	// game over
+	game_logic()->logic_factory().register_module<flappy_box::model::GameOver>([](std::shared_ptr<flappy_box::model::GameOver> const& o) { return std::make_shared<GameOverLogic>(o); });
+	al_renderer()->audible_factory().register_module<flappy_box::model::GameOver>([](std::shared_ptr<flappy_box::model::GameOver> const& o) { return std::make_shared<view::GameOverAlAudible>(o); });
+	gl_renderer()->drawable_factory().register_module<flappy_box::model::GameOver>([](std::shared_ptr<flappy_box::model::GameOver> const& o) { return std::make_shared<view::GameOverGlDrawable>(o); });
 
 	// world
 	game_logic()->logic_factory().register_module<flappy_box::model::World>([](std::shared_ptr<flappy_box::model::World> const& w) { return std::make_shared<WorldLogic>(w); });
