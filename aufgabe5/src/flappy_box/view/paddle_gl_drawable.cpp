@@ -20,8 +20,10 @@ PaddleGlDrawable::~PaddleGlDrawable() {
 }
 
 void PaddleGlDrawable::updateVBOs() {
-	double r0 = std::max(_model->size()[0], _model->size()[1]) * 0.5;
-	double r1 = std::min(_model->size()[2] * 0.5, r0);
+	_size = _model->size();
+
+	_r0 = std::max(_model->size()[0], _model->size()[1]) * 0.5;
+	_r1 = std::min(_model->size()[2] * 0.5, _r0);
 
 	float v[_seg0 * _seg1 * 3];
 	float n[_seg0 * _seg1 * 3];
@@ -30,7 +32,7 @@ void PaddleGlDrawable::updateVBOs() {
 	float* vp = v;
 	float* np = n;
 	unsigned int* tp = t;
-	
+
 	for (int s0 = 0; s0 < _seg0; s0++) {
 		float a = s0 / float(_seg0) * 2 * M_PI;
 		for (int s1 = 0; s1 < _seg1; s1++) {
@@ -41,9 +43,9 @@ void PaddleGlDrawable::updateVBOs() {
 			np[1] = cosf(b) * sinf(a);
 			np[2] = sinf(b);
 
-			vp[0] = r0 * cosf(a) + r1 * np[0];
-			vp[1] = r0 * sinf(a) + r1 * np[1];
-			vp[2] =                r1 * np[2];
+			vp[0] = _r0 * cosf(a) + _r1 * np[0];
+			vp[1] = _r0 * sinf(a) + _r1 * np[1];
+			vp[2] =                 _r1 * np[2];
 
 			tp[0] = s0 * _seg1 + s1;
 			tp[1] = ((s0 + 1) % _seg0) * _seg1 + s1;
@@ -51,7 +53,6 @@ void PaddleGlDrawable::updateVBOs() {
 			tp[3] = s0 * _seg1 + (s1 + 1) % _seg1;
 			tp[4] = ((s0 + 1) % _seg0) * _seg1 + s1;
 			tp[5] = ((s0 + 1) % _seg0) * _seg1 + (s1 + 1) % _seg1;
-
 
 			vp += 3;
 			np += 3;
@@ -74,14 +75,9 @@ void PaddleGlDrawable::updateVBOs() {
 }
 
 void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
-
-
+	if (_model->size() != _size) updateVBOs();
 
 	vec3_type pos = _model->position();
-	glPushMatrix();
-	glTranslated(pos[0], pos[1], pos[2]);
-	double angle = pos[0] * 10;
-	glRotated(angle, 0, 0, 1);
 
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
@@ -90,14 +86,22 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	float l_pos[] = { 10, -10, 10 };
-	float l_amb[] = { 0, 0, 0 };
-	float l_dif[] = { 1, 1, 1 };
+	float l_pos[] = {
+		float(pos[0]),
+		float(pos[1] - _r0 * 1.5),
+		float(pos[2] + _r1 * 3),
+		1
+	};
+	float l_amb[] = { 0, 0, 0, 1 };
+	float l_dif[] = { 1, 1, 1, 1 };
 	glLightfv(GL_LIGHT0, GL_POSITION, l_pos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l_amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l_dif);
+
 	glColor3f(0.6, 0.9, 0.7);
 
+	glPushMatrix();
+	glTranslated(pos[0], pos[1], pos[2]);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);

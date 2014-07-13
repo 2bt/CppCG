@@ -22,6 +22,9 @@ private:
 
 	void updateVBOs();
 
+	vec3_type _size;
+	double _r0;
+	double _r1;
 	const int _seg0 = 40;
 	const int _seg1 = 15;
 };
