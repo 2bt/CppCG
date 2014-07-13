@@ -76,12 +76,6 @@ void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
 	glBindTexture(GL_TEXTURE_2D, _texture);
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	float l_pos[] = { 10, -10, 10 };
-	float l_amb[] = { 0, 0, 0 };
-	float l_dif[] = { 1, 1, 1 };
-	glLightfv(GL_LIGHT0, GL_POSITION, l_pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, l_amb);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, l_dif);
 
 	double angle = _model->angle();
 	const vec3_type& pos = _model->position();
