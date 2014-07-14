@@ -10,15 +10,18 @@ using namespace ::flappy_box::view;
 
 PaddleGlDrawable::PaddleGlDrawable(const std::shared_ptr< ::flappy_box::model::Paddle >& p)
 : _model(p) {
-	_angle = 0;
 	glGenBuffers(3, _ring_vbos);
 	glGenBuffers(3, _blade_vbos);
+	glGenBuffers(_vortex_count, _vortex_vbos);
+	glGenBuffers(1, &_vortex_color_vbo);
 	updateVBOs();
 }
 
 PaddleGlDrawable::~PaddleGlDrawable() {
 	glDeleteBuffers(3, _ring_vbos);
 	glDeleteBuffers(3, _blade_vbos);
+	glDeleteBuffers(_vortex_count, _vortex_vbos);
+	glDeleteBuffers(1, &_vortex_color_vbo);
 }
 
 void PaddleGlDrawable::updateRingVBOs() {
@@ -33,7 +36,6 @@ void PaddleGlDrawable::updateRingVBOs() {
 	for (int s0 = 0; s0 < _seg0; s0++) {
 		float a = s0 / float(_seg0) * 2 * M_PI;
 		for (int s1 = 0; s1 < _seg1; s1++) {
-
 			float b = s1 / float(_seg1) * 2 * M_PI;
 
 			np[0] = cosf(b) * cosf(a);
@@ -85,13 +87,10 @@ void PaddleGlDrawable::updateBladeVBOs() {
 	unsigned int* tp = t;
 
 	for (int c = 0; c < _blade_count; c++) {
-
 		float a1 = (c - 0.3) / float(_blade_count) * 2 * M_PI;
 		float a2 = (c + 0.3) / float(_blade_count) * 2 * M_PI;
 
-		vp[0] = 0;
-		vp[1] = 0;
-		vp[2] = 0;
+		vp[0] = vp[1] = vp[2] = 0;
 
 		vp[3] = (_r0 - _r1) * cosf(a1);
 		vp[4] = (_r0 - _r1) * sinf(a1);
@@ -141,6 +140,24 @@ void PaddleGlDrawable::updateVBOs() {
 
 	updateRingVBOs();
 	updateBladeVBOs();
+
+
+	for (int i = 0; i < 3; i++) {
+		glBindBuffer(GL_ARRAY_BUFFER, _vortex_vbos[i]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vortex_length * 2, NULL, GL_DYNAMIC_DRAW);
+	}
+
+	float c[_vortex_length * 2 * 4];
+	float* cp = c;
+	for (int i = 0; i < _vortex_length; i++) {
+		for (int j = 0; j < 2; j++) {
+			cp[0] = cp[1] = cp[2] = 1;
+			cp[3] = 0.25 * sinf(i / float(_vortex_length));
+			cp += 4;
+		}
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, _vortex_color_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(c), c, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -199,15 +216,22 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	glEnable(GL_CULL_FACE);
 
 
-
 	glDisable(GL_LIGHTING);
 
 	glPopMatrix();
 
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, _vortex_color_vbo);
+	glColorPointer(4, GL_FLOAT, 0, NULL);
+
+	// render vortices
+
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 
 
 }
