@@ -10,21 +10,18 @@ using namespace ::flappy_box::view;
 
 PaddleGlDrawable::PaddleGlDrawable(const std::shared_ptr< ::flappy_box::model::Paddle >& p)
 : _model(p) {
-
-	glGenBuffers(3, _buffers);
+	_angle = 0;
+	glGenBuffers(3, _ring_vbos);
+	glGenBuffers(3, _blade_vbos);
 	updateVBOs();
 }
 
 PaddleGlDrawable::~PaddleGlDrawable() {
-	glDeleteBuffers(3, _buffers);
+	glDeleteBuffers(3, _ring_vbos);
+	glDeleteBuffers(3, _blade_vbos);
 }
 
-void PaddleGlDrawable::updateVBOs() {
-	_size = _model->size();
-
-	_r0 = std::max(_model->size()[0], _model->size()[1]) * 0.5;
-	_r1 = std::min(_model->size()[2] * 0.5, _r0);
-
+void PaddleGlDrawable::updateRingVBOs() {
 	float v[_seg0 * _seg1 * 3];
 	float n[_seg0 * _seg1 * 3];
 	unsigned int t[_seg0 * _seg1 * 6];
@@ -60,15 +57,90 @@ void PaddleGlDrawable::updateVBOs() {
 		}
 	}
 
-
-	glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, _ring_vbos[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(v), v, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _buffers[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, _ring_vbos[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(n), n, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _buffers[2]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ring_vbos[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(t), t, GL_STATIC_DRAW);
+}
+
+
+static vec3_type calc_normal(vec3_type a, vec3_type b, vec3_type c) {
+	vec3_type ab = b - a;
+	vec3_type ac = c - a;
+	return ab.cross(ac).normalized();
+}
+
+
+void PaddleGlDrawable::updateBladeVBOs() {
+	float v[_blade_count * 9];
+	float n[_blade_count * 9];
+	unsigned int t[_blade_count * 3];
+
+	float* vp = v;
+	float* np = n;
+	unsigned int* tp = t;
+
+	for (int c = 0; c < _blade_count; c++) {
+
+		float a1 = (c - 0.3) / float(_blade_count) * 2 * M_PI;
+		float a2 = (c + 0.3) / float(_blade_count) * 2 * M_PI;
+
+		vp[0] = 0;
+		vp[1] = 0;
+		vp[2] = 0;
+
+		vp[3] = (_r0 - _r1) * cosf(a1);
+		vp[4] = (_r0 - _r1) * sinf(a1);
+		vp[5] = _r1;
+
+		vp[6] = (_r0 - _r1) * cosf(a2);
+		vp[7] = (_r0 - _r1) * sinf(a2);
+		vp[8] = -_r1;
+
+		vec3_type n = calc_normal(
+			{ vp[0], vp[1], vp[2] },
+			{ vp[3], vp[4], vp[5] },
+			{ vp[6], vp[7], vp[8] }
+		);
+		for (int i = 0; i < 3; i++) {
+			np[0] = n[0];
+			np[1] = n[1];
+			np[2] = n[2];
+			np += 3;
+		}
+
+		tp[0] = c * 3 + 0;
+		tp[1] = c * 3 + 1;
+		tp[2] = c * 3 + 2;
+
+		vp += 9;
+		tp += 3;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, _blade_vbos[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(v), v, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _blade_vbos[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(n), n, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _blade_vbos[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(t), t, GL_STATIC_DRAW);
+
+}
+
+
+void PaddleGlDrawable::updateVBOs() {
+	_size = _model->size();
+
+	_r0 = std::max(_model->size()[0], _model->size()[1]) * 0.5;
+	_r1 = std::min(_model->size()[2] * 0.5, _r0);
+
+	updateRingVBOs();
+	updateBladeVBOs();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -98,29 +170,37 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l_amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l_dif);
 
-	glColor3f(0.6, 0.9, 0.7);
-
-	glPushMatrix();
-	glTranslated(pos[0], pos[1], pos[2]);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);
+
+	glPushMatrix();
+	glTranslated(pos[0], pos[1], pos[2]);
+
+
+	glColor3f(0.6, 0.9, 0.7);
+	glBindBuffer(GL_ARRAY_BUFFER, _ring_vbos[0]);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	glBindBuffer(GL_ARRAY_BUFFER, _buffers[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, _ring_vbos[1]);
 	glNormalPointer(GL_FLOAT, 0, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, _buffers[2]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, _ring_vbos[2]);
 	glDrawElements(GL_TRIANGLES, _seg0 * _seg1 * 6, GL_UNSIGNED_INT, NULL);
 
+	glRotated(_model->angle(), 0, 0, 1);
+	glDisable(GL_CULL_FACE);
+	glColor3f(0.6, 0.7, 0.9);
+	glBindBuffer(GL_ARRAY_BUFFER, _blade_vbos[0]);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, _blade_vbos[1]);
+	glNormalPointer(GL_FLOAT, 0, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, _blade_vbos[2]);
+	glDrawElements(GL_TRIANGLES, _blade_count * 3, GL_UNSIGNED_INT, NULL);
+	glEnable(GL_CULL_FACE);
+
+
+
 	glDisable(GL_LIGHTING);
-/*
-	glLineWidth(1);
-	glColor3f(0, 0, 0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawElements(GL_TRIANGLES, _seg0 * _seg1 * 6, GL_UNSIGNED_INT, NULL);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-*/
 
 	glPopMatrix();
 

@@ -18,15 +18,21 @@ public:
 
 private:
 	std::shared_ptr< model::Paddle const> _model;
-	GLuint _buffers[3];
 
 	void updateVBOs();
 
+	void updateRingVBOs();
+	void updateBladeVBOs();
+
+	GLuint _ring_vbos[3];
+	GLuint _blade_vbos[3];
 	vec3_type _size;
 	double _r0;
 	double _r1;
 	const int _seg0 = 40;
 	const int _seg1 = 15;
+	const int _blade_count = 9;
+	double _angle;
 };
 }
 }

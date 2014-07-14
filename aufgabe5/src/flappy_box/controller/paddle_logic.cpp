@@ -9,10 +9,10 @@ using namespace ::flappy_box::controller;
 
 PaddleLogic::PaddleLogic(const std::shared_ptr< flappy_box::model::Paddle >& b )
 : ::controller::Logic::ObjectLogic()
-, _model( b )
-{}
+, _model(b) {
+}
 
-bool PaddleLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
+bool PaddleLogic::advance(::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev) {
 	double timestep_sec = l.game_model()->timestep().count();
 //	printf("key %d %d\n", ev.key_state, ev.special_key);
 
@@ -44,6 +44,7 @@ bool PaddleLogic::advance( ::controller::Logic& l, ::controller::InputEventHandl
 	_model->setPosition(p_neu);
 	_model->setVelocity(v_neu);
 	_model->setAcceleration(a_neu);
+	_model->setAngle(_model->angle() + timestep_sec * 720);
 
 	return false;
 }

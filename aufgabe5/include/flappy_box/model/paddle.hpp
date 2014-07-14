@@ -27,6 +27,9 @@ public:
 
 	const vec3_type& playerControl() const { return _playerControl; }
 	void setPlayerControl(vec3_type playerControl) { _playerControl = playerControl; }
+
+	double angle() const { return _angle; }
+	void setAngle(double a) { _angle = a; }
 private:
 	vec3_type _position;
 	vec3_type _maxPosition;
@@ -34,6 +37,7 @@ private:
 	vec3_type _acceleration;
 	vec3_type _size;
 	vec3_type _playerControl;
+	double	 _angle = 0;
 };
 
 }
