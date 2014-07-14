@@ -24,7 +24,7 @@ GlRenderer::delegate_factory_type const& GlRenderer::drawable_factory() const {
 
 void GlRenderer::visualize_model(GlutWindow& w) {
 #ifndef DEBUG_VISUALIZATION 
-	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	glClearColor(0.7, 0.7, 0.7, 0);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 #endif
 

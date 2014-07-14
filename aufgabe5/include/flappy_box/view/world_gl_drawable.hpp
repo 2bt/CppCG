@@ -17,6 +17,7 @@ public:
 
 private:
 	std::shared_ptr< model::World const > _model;
+	GLuint _texture;
 };
 }
 }
