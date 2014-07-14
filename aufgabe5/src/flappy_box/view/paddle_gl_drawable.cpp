@@ -15,6 +15,19 @@ PaddleGlDrawable::PaddleGlDrawable(const std::shared_ptr< ::flappy_box::model::P
 	glGenBuffers(_vortex_count, _vortex_vbos);
 	glGenBuffers(1, &_vortex_color_vbo);
 	updateVBOs();
+
+
+
+	for (int v = 0; v < _vortex_count; v++) {
+
+		glBindBuffer(GL_ARRAY_BUFFER, _vortex_vbos[v]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vortex_length * 2 * 3, NULL, GL_DYNAMIC_DRAW);
+
+		for (int i = 0; i < _vortex_length; i++) {
+			_vortex_dat[v][i][0] = _model->position();
+			_vortex_dat[v][i][1] = _model->position();
+		}
+	}
 }
 
 PaddleGlDrawable::~PaddleGlDrawable() {
@@ -141,18 +154,13 @@ void PaddleGlDrawable::updateVBOs() {
 	updateRingVBOs();
 	updateBladeVBOs();
 
-
-	for (int i = 0; i < 3; i++) {
-		glBindBuffer(GL_ARRAY_BUFFER, _vortex_vbos[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _vortex_length * 2, NULL, GL_DYNAMIC_DRAW);
-	}
-
 	float c[_vortex_length * 2 * 4];
 	float* cp = c;
 	for (int i = 0; i < _vortex_length; i++) {
 		for (int j = 0; j < 2; j++) {
 			cp[0] = cp[1] = cp[2] = 1;
-			cp[3] = 0.25 * sinf(i / float(_vortex_length));
+			float f = sinf(M_PI * i / float(_vortex_length - 1));
+			cp[3] = 0.25 * f * f;
 			cp += 4;
 		}
 	}
@@ -167,6 +175,7 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	if (_model->size() != _size) updateVBOs();
 
 	vec3_type pos = _model->position();
+	float ang = _model->angle();
 
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
@@ -204,7 +213,7 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, _ring_vbos[2]);
 	glDrawElements(GL_TRIANGLES, _seg0 * _seg1 * 6, GL_UNSIGNED_INT, NULL);
 
-	glRotated(_model->angle(), 0, 0, 1);
+	glRotated(ang, 0, 0, 1);
 	glDisable(GL_CULL_FACE);
 	glColor3f(0.6, 0.7, 0.9);
 	glBindBuffer(GL_ARRAY_BUFFER, _blade_vbos[0]);
@@ -220,14 +229,62 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 
 	glPopMatrix();
 
+
+	// render vortices
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glDepthMask(GL_FALSE);
+
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, _vortex_color_vbo);
 	glColorPointer(4, GL_FLOAT, 0, NULL);
+	glColor3f(1, 1, 1);
 
-	// render vortices
+	float timestep_sec = 0.031;	// TODO: where do we get this value from?
+	float vortex_speed = 100;
+	float air_vortex_band_width = 1;
+
+	for (int v = 0; v < _vortex_count; v++) {
+
+		for (int t = _vortex_length - 1; t > 0; --t) {
+			_vortex_dat[v][t][0] = _vortex_dat[v][t - 1][0] + vec3_type(0, 0, timestep_sec * vortex_speed);
+			vec3_type d = _vortex_dat[v][t - 1][1] - _vortex_dat[v][t - 1][0];
+			d[2] = 0;
+			_vortex_dat[v][t][1] = _vortex_dat[v][t][0] + d * 1.075;
+		}
+		_vortex_dat[v][0][0] = pos;
+		_vortex_dat[v][0][1] = pos + vec3_type(
+			_r0 * cosf((ang + v / float(_vortex_count) * 360) / 180 * M_PI),
+			0,
+			_r0 * sinf((ang + v / float(_vortex_count) * 360) / 180 * M_PI));
 
 
+		glBindBuffer(GL_ARRAY_BUFFER, _vortex_vbos[v]);
+		float* vp = (float*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		for (int t = 0; t < _vortex_length; t++) {
+			vec3_type p = _vortex_dat[v][t][1];
+			p[0] -= 0.5 * air_vortex_band_width;
+			vp[0] = p[0];
+			vp[1] = p[1];
+			vp[2] = p[2];
+			p[0] += air_vortex_band_width;
+			vp[3] = p[0];
+			vp[4] = p[1];
+			vp[5] = p[2];
+			vp += 6;
+		}
+
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, _vortex_length * 2);
+
+	
+	}
+
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glDisableClientState(GL_VERTEX_ARRAY);
