@@ -52,7 +52,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	glBegin(GL_QUADS);
 
 	glNormal3f(0, 0, 1);
-	for (float x = -w; x < w; x += dx) {
+	for (float x = -w-dx; x <= w+dx; x += dx) {
 		for (float y = -30; y <= 300; y += dy) {
 			glTexCoord2f(x * s, y * s);
 			glVertex3f(x, y, -h);
@@ -65,7 +65,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 		}
 	}
 	glNormal3f(0, 0, -1);
-	for (float x = -w; x < w; x += dx) {
+	for (float x = -w-dx; x < w+dx; x += dx) {
 		for (float y = -30; y <= 300; y += dy) {
 			glTexCoord2f(x * s, (y + dy) * s);
 			glVertex3f(x, y + dy, h);
@@ -79,7 +79,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	}
 	glNormal3f(1, 0, 0);
 	for (float z = -h; z < h; z += dz) {
-		for (float y = -30; y <= 300; y += dy) {
+		for (float y = -40; y <= 300; y += dy) {
 			glTexCoord2f(z * s, y * s);
 			glVertex3f(-w, y, z);
 			glTexCoord2f(z * s, (y + dy) * s);
@@ -92,7 +92,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	}
 	glNormal3f(-1, 0, 0);
 	for (float z = -h; z < h; z += dz) {
-		for (float y = -30; y <= 300; y += dy) {
+		for (float y = -40; y <= 300; y += dy) {
 			glTexCoord2f((z + dz) * s, y * s);
 			glVertex3f(w, y, z + dz);
 			glTexCoord2f((z + dz) * s, (y + dy) * s);
