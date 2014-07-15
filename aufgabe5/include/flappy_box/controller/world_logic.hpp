@@ -22,7 +22,6 @@ private:
 
 
 	std::shared_ptr< ::flappy_box::model::World > _model;
-	bool _shallRestartTheGame;
 	const double _timeDelta = 1;
 	std::chrono::steady_clock::time_point _previousTs;
 };
