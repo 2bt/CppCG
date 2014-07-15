@@ -16,7 +16,7 @@ BoxAlAudible::BoxAlAudible(std::shared_ptr<flappy_box::model::Box> const& b)
 	double x_pos = b->position()[0] / b->maxPosition()[0];
 
 	// play the sound
-	SoundProvider::getInstance()->playSound("birth.wav", x_pos, 0.2, 1.0, false);
+	SoundProvider::getInstance()->playSound("birth.wav", x_pos, 0.01, 1.0, false);
 }
 
 

@@ -13,6 +13,8 @@ class PaddleAlAudible : public ::view::AlRenderer::Audible {
 
 	private:
 		std::shared_ptr< model::Paddle const> _model;
+		ALuint _alPaddleSource;
+		ALuint _alPaddleBuffer;
 
 };
 }

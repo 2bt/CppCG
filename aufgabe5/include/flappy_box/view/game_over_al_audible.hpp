@@ -12,7 +12,10 @@ class GameOverAlAudible : public ::view::AlRenderer::Audible {
 		virtual void auralize(::view::AlRenderer&) override;
 
 	private:
-		std::shared_ptr<model::GameOver const> _model;
+		std::shared_ptr<model::GameOver const> _model;		
+		double _x_position;
+		ALuint _handle;
+
 
 };
 }
