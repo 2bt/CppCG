@@ -30,9 +30,8 @@ namespace controller
           KEY_UP,
           KEY_DOWN
         };
-        
+
         key_state_type key_state;
-//        
         double mouse_pos[2];
       };
 

@@ -33,7 +33,6 @@ BoxGlDrawable::~BoxGlDrawable() {
 
 void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
 	double timestep_sec = r.game_model()->timestep().count();
-	_age += timestep_sec;
 
 	static const float v[] = {
 		 .5, .5,-.5, -.5, .5,-.5, -.5, .5, .5, .5, .5, .5,
@@ -89,7 +88,7 @@ void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
 	glRotated(angle * 2, 0.7, 0.4, 0.);
 	glScaled(size, size, size);
 
-	double a = std::min(_age * 4, 1.0);
+	double a = std::min(_model->age() * 4, 1.0);
 	glScaled(a, a, a);
 
 

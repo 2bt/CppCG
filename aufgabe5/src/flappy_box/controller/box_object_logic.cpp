@@ -14,6 +14,8 @@ BoxObjectLogic::BoxObjectLogic(const std::shared_ptr< flappy_box::model::Box >& 
 
 bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
 	double timestep_sec = l.game_model()->timestep().count();
+	_model->setAge(_model->age() + timestep_sec);
+
 	vec3_type p_alt = _model->position();
 	vec3_type v_alt = _model->velocity();
 	vec3_type a_alt = _model->acceleration();

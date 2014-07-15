@@ -13,7 +13,7 @@ public:
 
 	Box( const std::string& = "Box" );
 
-	const double angle() const { return _angle; }
+	double angle() const { return _angle; }
 	void setAngle( double a ) { _angle = a; }
 
 	const vec3_type& position() const { return _position; }
@@ -22,7 +22,7 @@ public:
 	const vec3_type& maxPosition() const { return _maxPosition; }
 	void setMaxPosition( const vec3_type& p ) { _maxPosition = p; }
 
-	const double size() const { return _size; }
+	double size() const { return _size; }
 	void setSize( double s ) { _size = s; }
 
 	const vec3_type& velocity() const { return _velocity; }
@@ -34,11 +34,17 @@ public:
 	const vec3_type& externalForce() const { return _externalForce; }
 	void setExternalForce( const vec3_type& f ) { _externalForce = f; }
 
-	const double& rotAcceleration() const { return _rotAcceleration; }
+	double rotAcceleration() const { return _rotAcceleration; }
 	void setRotAcceleration( double ra ) { _rotAcceleration = ra; }
 
-	const double& rotVelocity() const { return _rotVelocity; }
+	double rotVelocity() const { return _rotVelocity; }
 	void setRotVelocity( double rv ) { _rotVelocity = rv; }
+
+	void die() { _death_time = _age; }
+	double age() const { return _age; }
+	void setAge( double a ) { _age = a; }
+	double deathTime() const { return _death_time; }
+
 
 private:
 	double               _angle;
@@ -50,7 +56,8 @@ private:
 	double     _rotAcceleration; // only in y-direction
 	double         _rotVelocity; // only in y-direction
 	vec3_type    _externalForce; // vector containing the external force (direction is normalized, length is force)
-
+	double                 _age = 0;
+	double          _death_time = 0;
 };
 
 }

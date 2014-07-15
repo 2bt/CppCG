@@ -10,15 +10,14 @@ using namespace ::flappy_box::controller;
 
 WorldLogic::WorldLogic(const std::shared_ptr< flappy_box::model::World >& w)
 : ::controller::Logic::ObjectLogic()
-, _model( w )
-, _shallRestartTheGame(true) {
+, _model(w) {
 }
 
 bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
 	static double time = 0;
 	double timestep_sec = l.game_model()->timestep().count();
 
-	if(_shallRestartTheGame) restartGame(l);
+	if(_model->shallRestartTheGame()) restartGame(l);
 
 	time += timestep_sec;
 	while (time > _timeDelta) {
@@ -33,13 +32,9 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 		paddle = std::dynamic_pointer_cast<flappy_box::model::Paddle>(*paddle_it);
 	}
 
-	auto world = std::dynamic_pointer_cast< flappy_box::model::World >(*std::find_if(
-			l.game_model()->objects().begin(), l.game_model()->objects().end(),
-			[](std::shared_ptr< ::model::GameObject> const& p) { return p->name() == "World"; }));
-
-	if (world->lives() > 0) world->setPlayerPoints(world->playerPoints() + 1);
+	if (_model->lives() > 0) _model->setPlayerPoints(_model->playerPoints() + 1);
 	else if (paddle) {
-		auto over = std::make_shared<flappy_box::model::GameOver>("GameOver", world->playerPoints());
+		auto over = std::make_shared<flappy_box::model::GameOver>("GameOver", _model->playerPoints());
 		l.game_model()->addGameObject(over);
 		paddle->setAlive(false);
 	}
@@ -52,10 +47,11 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 			setForce(box, paddle);
 			if (box->position()[2] < paddle->position()[2]) {
 				box->setAlive(false);
-				world->setLives(world->lives() - 1);
+				_model->setLives(_model->lives() - 1);
 				continue;
 			}
 		}
+		else box->setExternalForce({0, 0, 0});
 
 		for (auto& obj2 : l.game_model()->objects()) {
 			auto box2 = std::dynamic_pointer_cast<flappy_box::model::Box>(obj2);
@@ -76,7 +72,8 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 }
 
 
-void WorldLogic::restartGame( ::controller::Logic& l ) {
+void WorldLogic::restartGame(::controller::Logic& l) {
+	_model->setShallRestartTheGame(false);
 
 	// invalidate all game objects
 	for (auto& o : l.game_model()->objects()) o->setAlive(false);
@@ -98,7 +95,6 @@ void WorldLogic::restartGame( ::controller::Logic& l ) {
 		_model->getWorldHalfHeight()
 	});
 	l.game_model()->addGameObject(paddle);
-	_shallRestartTheGame = false;
 }
 
 void WorldLogic::addBoxToGame( ::controller::Logic& l ) {
