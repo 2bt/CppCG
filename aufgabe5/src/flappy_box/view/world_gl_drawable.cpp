@@ -40,7 +40,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	glFogfv(GL_FOG_COLOR, fog);
 	glFogf(GL_FOG_MODE, GL_LINEAR);
 	glFogf(GL_FOG_MODE, GL_EXP2);
-	glFogf(GL_FOG_DENSITY, 0.004);
+	glFogf(GL_FOG_DENSITY, 0.0055);
 	glFogf(GL_FOG_START, 0);
 	glFogf(GL_FOG_END, 100);
 
