@@ -30,6 +30,8 @@ public:
 
 	double angle() const { return _angle; }
 	void setAngle(double a) { _angle = a; }
+
+
 private:
 	vec3_type _position;
 	vec3_type _maxPosition;
@@ -37,7 +39,7 @@ private:
 	vec3_type _acceleration;
 	vec3_type _size;
 	vec3_type _playerControl;
-	double	 _angle = 0;
+	double	  _angle = 0;
 };
 
 }

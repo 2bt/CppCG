@@ -13,7 +13,7 @@ public:
 
 	Box( const std::string& = "Box" );
 
-	const double& angle() const { return _angle; }
+	const double angle() const { return _angle; }
 	void setAngle( double a ) { _angle = a; }
 
 	const vec3_type& position() const { return _position; }
@@ -41,7 +41,6 @@ public:
 	void setRotVelocity( double rv ) { _rotVelocity = rv; }
 
 private:
-
 	double               _angle;
 	double                _size; // same size in every direction
 	vec3_type         _position;

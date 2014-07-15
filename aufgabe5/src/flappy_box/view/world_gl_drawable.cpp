@@ -1,4 +1,5 @@
 #include "flappy_box/view/world_gl_drawable.hpp"
+#include "view/glut_window.hpp"
 
 #include <GL/freeglut.h>
 
@@ -79,7 +80,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	}
 	glNormal3f(1, 0, 0);
 	for (float z = -h; z < h; z += dz) {
-		for (float y = -40; y <= 300; y += dy) {
+		for (float y = -60; y <= 300; y += dy) {
 			glTexCoord2f(z * s, y * s);
 			glVertex3f(-w, y, z);
 			glTexCoord2f(z * s, (y + dy) * s);
@@ -92,7 +93,7 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 	}
 	glNormal3f(-1, 0, 0);
 	for (float z = -h; z < h; z += dz) {
-		for (float y = -40; y <= 300; y += dy) {
+		for (float y = -60; y <= 300; y += dy) {
 			glTexCoord2f((z + dz) * s, y * s);
 			glVertex3f(w, y, z + dz);
 			glTexCoord2f((z + dz) * s, (y + dy) * s);
@@ -109,5 +110,43 @@ void WorldGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& win 
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
+
+
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
+	glLineWidth(2);
+	glColor3f(1, 1, 1);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, win.width(), 0, win.height(), -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+
+	char line[32];
+	glLoadIdentity(); glTranslatef(10, 10, 0); glScalef(0.15, 0.15, 1);
+	glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*) "score:");
+	glLoadIdentity(); glTranslatef(70, 10, 0); glScalef(0.15, 0.15, 1);
+	sprintf(line, "%6d", _model->playerPoints());
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (unsigned char*) line);
+
+	glLoadIdentity(); glTranslatef(10, 30, 0); glScalef(0.15, 0.15, 1);
+	glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*) "lives:");
+	glLoadIdentity(); glTranslatef(70, 30, 0); glScalef(0.15, 0.15, 1);
+	sprintf(line, "%6d", _model->lives());
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (unsigned char*) line);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 }
 

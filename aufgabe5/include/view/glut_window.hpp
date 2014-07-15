@@ -38,7 +38,7 @@ namespace view
       void ensureCurrent() const;
       void keyboardEvent(unsigned char key, int special_key, int mouse_x, int mouse_y, bool up);
 
-      static void glutDisplay(); 
+      static void glutDisplay();
       static void glutReshape( int width, int height );
       static void glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y);
       static void glutKeyboardUp(unsigned char glut_key, int mouse_x, int mouse_y);
