@@ -114,9 +114,9 @@ void WorldLogic::addBoxToGame( ::controller::Logic& l ) {
 	box->setPosition({
 		(rand() / double(RAND_MAX) * 2 - 1) * box->maxPosition()[0],
 		0,
-		//_model->getWorldHalfHeight() - box->size() * 0.8
 		box->maxPosition()[2] * (1 + rand() / double(RAND_MAX)) * 0.5
 	});
+	box->setAngle(rand() / double(RAND_MAX) * 360);
 	l.game_model()->addGameObject(box);
 }
 

@@ -98,7 +98,7 @@ void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w ) {
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
-	glColor3d(0, 0.5, 0);
+	glColor3f(0, 0.5 + sinf(_age * 10) * 0.5, 0);
 	glLineWidth(3);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_QUADS, 0, 24);
