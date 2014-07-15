@@ -241,7 +241,7 @@ void PaddleGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& w )
 	glColorPointer(4, GL_FLOAT, 0, NULL);
 	glColor3f(1, 1, 1);
 
-	float  timestep_sec = r.game_model()->timestep().count();
+	double timestep_sec = r.game_model()->timestep().count();
 	float vortex_speed = 100;
 	float air_vortex_band_width = 1;
 

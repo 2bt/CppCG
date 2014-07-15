@@ -16,18 +16,13 @@ WorldLogic::WorldLogic(const std::shared_ptr< flappy_box::model::World >& w)
 
 bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
 	static double time = 0;
-	//double timestep_sec = l.game_model()->timestep().count();
+	double timestep_sec = l.game_model()->timestep().count();
 
 	if(_shallRestartTheGame) restartGame(l);
 
-	using namespace std::chrono;
-	steady_clock::time_point now = steady_clock::now();
-	duration<double> time_span = duration_cast<duration<double>>(now - _previousTs);
-	_previousTs = now;
-	time += time_span.count();
-
-	if(time > _timeDelta) {
-		time = 0;
+	time += timestep_sec;
+	while (time > _timeDelta) {
+		time -= _timeDelta;
 		addBoxToGame(l);
 	}
 
@@ -55,11 +50,9 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 		if (paddle) {
 			setForce(box, paddle);
-
 			if (box->position()[2] < paddle->position()[2]) {
 				box->setAlive(false);
-				// FIXME:
-				// world->setLives(world->lives() - 1); 
+				world->setLives(world->lives() - 1);
 				continue;
 			}
 		}
@@ -111,23 +104,40 @@ void WorldLogic::restartGame( ::controller::Logic& l ) {
 void WorldLogic::addBoxToGame( ::controller::Logic& l ) {
 
 	auto box = std::make_shared<flappy_box::model::Box>();
-	box->setSize(1 + rand() / double(RAND_MAX) * 3);
+	box->setSize(2 + rand() / double(RAND_MAX) * 2);
 
 	box->setMaxPosition({
-		_model->getWorldHalfWidth() - box->size() * 0.5,
+		_model->getWorldHalfWidth() - box->size() * 0.8,
 		0,
-		_model->getWorldHalfHeight() - box->size() * 0.5
+		_model->getWorldHalfHeight() - box->size() * 0.8
 	});
 	box->setPosition({
 		(rand() / double(RAND_MAX) * 2 - 1) * box->maxPosition()[0],
 		0,
-		_model->getWorldHalfHeight() - box->size() * 0.5
+		//_model->getWorldHalfHeight() - box->size() * 0.8
+		box->maxPosition()[2] * (1 + rand() / double(RAND_MAX)) * 0.5
 	});
 	l.game_model()->addGameObject(box);
 }
 
 
-void WorldLogic::setForce( std::shared_ptr< flappy_box::model::Box > & box, std::shared_ptr<flappy_box::model::Paddle > & paddle ) {
-  // TODO: realisiert die Interaktion zwischen Nutzer-Paddle und den Boxes
+void WorldLogic::setForce(std::shared_ptr<flappy_box::model::Box>& box, std::shared_ptr<flappy_box::model::Paddle>& paddle) {
+	vec3_type b = box->position();
+	vec3_type p = paddle->position();
+	double w = paddle->size()[0];
+	vec3_type n = vec3_type(0, 0, 1);
+	vec3_type f;
+	if (b[0] < p[0] - w)		f = b - (p - vec3_type(w, 0, 0));
+	else if (b[0] > p[0] + w)	f = b - (p + vec3_type(w, 0, 0));
+	else						f = n;
+	f.normalize();
+	f *= powf(n.dot(f), 5);
+	double s = box->size();
+	f *= 10 * s * s;
+
+	box->setExternalForce(f);
 }
+
+
+
 

@@ -22,7 +22,7 @@ public:
 	const vec3_type& maxPosition() const { return _maxPosition; }
 	void setMaxPosition( const vec3_type& p ) { _maxPosition = p; }
 
-	const double& size() const { return _size; }
+	const double size() const { return _size; }
 	void setSize( double s ) { _size = s; }
 
 	const vec3_type& velocity() const { return _velocity; }

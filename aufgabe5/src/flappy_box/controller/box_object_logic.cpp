@@ -29,9 +29,9 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
 	vec3_type v_neu = v_alt + (a_neu * timestep_sec);
 	vec3_type p_neu = p_alt + (v_neu * timestep_sec);
 
-	for (int i = 0; i < p_neu.SizeAtCompileTime; i+=2) { // x z 
+	for (int i = 0; i < p_neu.SizeAtCompileTime; i+=2) {
 		if (fabs(p_neu[i]) > _model->maxPosition()[i]) {
-			v_neu[i] *= -d; //spiegeln und dämpfung i
+			v_neu[i] *= -d;
 			p_neu[i] = p_neu[i] < 0 ? -_model->maxPosition()[i] : _model->maxPosition()[i];
 		}
 	}

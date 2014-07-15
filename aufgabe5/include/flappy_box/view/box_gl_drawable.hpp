@@ -18,6 +18,7 @@ public:
 private:
 	std::shared_ptr< model::Box const > _model;
 	GLuint _texture;
+	double _age;
 };
 }
 }
