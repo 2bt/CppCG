@@ -1,4 +1,5 @@
 #include "flappy_box/controller/world_logic.hpp"
+#include "flappy_box/model/particle.hpp"
 #include "flappy_box/model/game_over.hpp"
 #include <AL/alut.h>
 #include <thread>
@@ -14,11 +15,12 @@ WorldLogic::WorldLogic(const std::shared_ptr< flappy_box::model::World >& w)
 }
 
 bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandler::keyboard_event const& ev ) {
-	static double time = 0;
-	double timestep_sec = l.game_model()->timestep().count();
 
 	if(_model->shallRestartTheGame()) restartGame(l);
+	if (ev.key == 'k') _model->setLives(0);
 
+	double timestep_sec = l.game_model()->timestep().count();
+	static double time = 0;
 	time += timestep_sec;
 	while (time > _timeDelta) {
 		time -= _timeDelta;
@@ -59,10 +61,20 @@ bool WorldLogic::advance( ::controller::Logic& l, ::controller::InputEventHandle
 
 
 			auto d = box->position() - box2->position();
-			double l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
-			if (l <= box->size() * 0.8 + box2->size() * 0.8) {
+			double s = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+			if (s <= box->size() * 0.8 + box2->size() * 0.8) {
 				box->setAlive(false);
 				box2->setAlive(false);
+
+				for (int i = 0; i < 50; i++) {
+					auto p = std::make_shared<flappy_box::model::Particle>();
+					p->setPosition(box->position());
+					l.game_model()->addGameObject(p);
+
+					p = std::make_shared<flappy_box::model::Particle>();
+					p->setPosition(box2->position());
+					l.game_model()->addGameObject(p);
+				}
 			}
 
 		}

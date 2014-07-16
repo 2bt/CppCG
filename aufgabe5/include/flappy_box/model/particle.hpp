@@ -16,17 +16,16 @@ public:
 	const vec3_type& position() const { return _position; }
 	void setPosition( const vec3_type& p ) { _position = p; }
 
-	double size() const { return _size; }
-	void setSize( double s ) { _size = s; }
-
 	double age() const { return _age; }
 	void setAge( double a ) { _age = a; }
 
+	const vec3_type& velocity() const { return _velocity; }
+	double hue() const { return _hue; }
 
 private:
-	double                _size; // same size in every direction
 	vec3_type         _position;
 	vec3_type         _velocity;
+	double                 _hue;
 	double                 _age = 0;
 };
 
