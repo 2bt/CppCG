@@ -19,8 +19,8 @@ void ParticleGlDrawable::visualize(::view::GlRenderer& r, ::view::GlutWindow& w)
 	double timestep_sec = r.game_model()->timestep().count();
 
 	glColor3f(0, _model->hue(), 0);
-
 	glEnable(GL_BLEND);
+    glEnable(GL_POINT_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPointSize((1 - _model->age()) * 10);
 
