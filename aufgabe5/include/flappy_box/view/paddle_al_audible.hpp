@@ -6,15 +6,15 @@
 namespace flappy_box {
 namespace view {
 class PaddleAlAudible : public ::view::AlRenderer::Audible {
-	public:
-		PaddleAlAudible(std::shared_ptr< model::Paddle> const&);
+public:
+	PaddleAlAudible(std::shared_ptr< model::Paddle> const&);
 
-		virtual void auralize(::view::AlRenderer&) override;
+	virtual void auralize(::view::AlRenderer&) override;
 
-	private:
-		std::shared_ptr< model::Paddle const> _model;
-		ALuint _alPaddleSource;
-		ALuint _alPaddleBuffer;
+private:
+	std::shared_ptr< model::Paddle const> _model;
+	ALuint _alPaddleSource;
+	ALuint _alPaddleBuffer;
 
 };
 }
